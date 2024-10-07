@@ -1,17 +1,12 @@
 import mongoose from "mongoose";
 
-const UserDetailSchema = new mongoose.Schema(
-  {
-    name: String,
-    email: { type: String, unique: true },
-    password: String,
-    image: String,
-    gender: String,
-    profession: String,
-    userType: String,
-  },
-  {
-    collection: "User",
-  }
-);
-mongoose.model("User", UserDetailSchema);
+const UserSchema = new mongoose.Schema({
+  name: String,
+  email: { type: String, unique: true },
+  password: String,
+  isVerified: { type: Boolean, default: false }, // Verification status
+  verificationCode: String, // Code sent to the user's email
+  verificationCodeExpires: Date, // Expiration time for the code
+});
+
+mongoose.model("User", UserSchema);
