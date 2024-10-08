@@ -1,9 +1,11 @@
 import express from "express";
 import mongoose from "mongoose";
 import RESPONSE from "../../responseCodes.js";
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 const User = mongoose.model("User");
+const JWT_SECRET = process.env.JWT_SECRET;
 
 router.post("/verify-email", async (req, res) => {
   const { email, verificationCode } = req.body;
@@ -26,10 +28,10 @@ router.post("/verify-email", async (req, res) => {
     user.verificationCodeExpires = undefined;
     await user.save();
 
-    return res.status(RESPONSE.SUCCESS.OK.status).json({
-      status: "ok",
-      message: "Email verified successfully!",
-    });
+    const token = jwt.sign({ email: user.email, name: user.name }, JWT_SECRET);
+    return res
+      .status(RESPONSE.SUCCESS.OK.status)
+      .json({ token, message: "Email verified successfully!" });
   } else {
     return res.status(RESPONSE.ERROR.INVALID_CREDENTIALS.status).json({
       message: "Invalid or expired verification code.",

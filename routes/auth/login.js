@@ -40,10 +40,13 @@ router.post("/login-user", async (req, res) => {
   const isPasswordMatch = await bcrypt.compare(password, oldUser.password);
   if (isPasswordMatch) {
     try {
-      const token = jwt.sign({ email: oldUser.email }, JWT_SECRET);
+      const token = jwt.sign(
+        { email: oldUser.email, name: oldUser.name },
+        JWT_SECRET
+      );
       return res
         .status(RESPONSE.SUCCESS.OK.status)
-        .json({ status: "ok", token, message: "Login successful!" });
+        .json({ token, message: "Login successful!" });
       // eslint-disable-next-line no-unused-vars
     } catch (error) {
       return res
