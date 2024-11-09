@@ -1,7 +1,8 @@
-/* eslint-disable no-undef */
 import express from "express";
 import mongoose from "mongoose";
-import "./UserDetails.js";
+import "./modals/User.js";
+import "./modals/Customer.js";
+import "./modals/Transaction.js";
 import dotenv from "dotenv";
 
 // Import routes
@@ -10,13 +11,18 @@ import verifyEmail from "./routes/auth/verifyEmail.js";
 import resendVerificationEmail from "./routes/auth/resendVerificationEmail.js";
 import loginRoute from "./routes/auth/login.js";
 import userDataRoute from "./routes/auth/userData.js";
+import creatCustomer from "./routes/app/createCustomers.js";
+import getCustomer from "./routes/app/getCustomer.js";
+import getAllCustomers from "./routes/app/getAllCustomers.js";
+import getCustomerTransactions from "./routes/app/getCustomerTransactions.js";
+import creatTransaction from "./routes/app/createTransaction.js";
+import getTransaction from "./routes/app/getTransaction.js";
 import testRoute from "./routes/test.js";
 
 dotenv.config();
 
 const app = express();
 
-// eslint-disable-next-line no-undef
 const mongoURL = process.env.DB_CONNECTION_STR;
 
 mongoose
@@ -29,13 +35,26 @@ mongoose
 // Middleware to parse JSON request bodies
 app.use(express.json());
 
-// Use the routes
+// ROUTES
 app.use("/api", testRoute);
+
+// Auth Routes
 app.use("/api", registerRoute);
 app.use("/api", verifyEmail);
 app.use("/api", resendVerificationEmail);
 app.use("/api", loginRoute);
 app.use("/api", userDataRoute);
+
+// Customer Routes
+app.use("/api", creatCustomer);
+app.use("/api", getAllCustomers);
+app.use("/api", getCustomer);
+app.use("/api", getCustomerTransactions);
+
+// Transaction Routes
+app.use("/api", getTransaction);
+app.use("/api", creatTransaction);
+// app.use("/api", getAllTransactions);
 
 const PORT = process.env.PORT || 5001;
 
