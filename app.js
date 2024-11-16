@@ -17,6 +17,7 @@ import getAllCustomers from "./routes/app/getAllCustomers.js";
 import getCustomerTransactions from "./routes/app/getCustomerTransactions.js";
 import creatTransaction from "./routes/app/createTransaction.js";
 import getTransaction from "./routes/app/getTransaction.js";
+import updateCustomerBalance from "./routes/app/updateCustomerBalance.js";
 import testRoute from "./routes/test.js";
 
 dotenv.config();
@@ -50,6 +51,7 @@ app.use("/api", creatCustomer);
 app.use("/api", getAllCustomers);
 app.use("/api", getCustomer);
 app.use("/api", getCustomerTransactions);
+app.use("/api", updateCustomerBalance);
 
 // Transaction Routes
 app.use("/api", getTransaction);

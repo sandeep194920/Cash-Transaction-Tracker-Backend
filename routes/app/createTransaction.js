@@ -35,6 +35,8 @@ router.post("/add-transaction", async (req, res) => {
     const { items, customerID, amountPaid, transactionDate, taxPercentage } =
       req.body;
 
+    console.log("The tax percentage from FE is", taxPercentage);
+
     // Validate the customer
     const customer = await Customer.findById(customerID);
     if (!customer) {
@@ -70,7 +72,8 @@ router.post("/add-transaction", async (req, res) => {
 
     customer.totalBalance = balanceAmount;
     await customer.save();
-
+    console.log("customer", customer);
+    console.log("transaction", transaction);
     await transaction.save();
     // const updatedTransactions = await Transaction.find({
     //   customer: customerID,
