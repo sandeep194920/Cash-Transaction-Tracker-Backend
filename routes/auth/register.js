@@ -8,13 +8,22 @@ const router = express.Router();
 const User = mongoose.model("User");
 
 router.post("/register-user", async (req, res) => {
+  console.log("/register route");
   const { name, email, password } = req.body;
 
   const oldUser = await User.findOne({ email });
   if (oldUser) {
-    return res
-      .status(RESPONSE.ERROR.USER_EXISTS.status)
-      .json({ message: "User already exists!" });
+    if (oldUser.isVerified) {
+      return res.status(RESPONSE.ERROR.USER_EXISTS.status).json({
+        message: "User already exists! Please login.",
+        error_code: "USER_VERIFIED",
+      });
+    } else {
+      return res.status(RESPONSE.ERROR.USER_EXISTS.status).json({
+        message: "User already exists but not verified! Please verify.",
+        error_code: "USER_NOT_VERIFIED",
+      });
+    }
   }
 
   let newUser; // Declare newUser outside try-catch
@@ -32,6 +41,7 @@ router.post("/register-user", async (req, res) => {
       password: encryptedPassword,
       verificationCode,
       verificationCodeExpires,
+      // isVerified:false // by default specified in schema so no need here
     });
 
     // Respond to the client

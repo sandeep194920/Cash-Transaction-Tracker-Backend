@@ -56,18 +56,7 @@ router.post("/update-customer-balance", async (req, res) => {
     }
 
     const oldBalance = customer.totalBalance;
-    console.log(
-      "The customer current balance is ",
-      customer.totalBalance,
-      " and type is",
-      typeof customer.totalBalance
-    );
-    console.log(
-      "The newBalance is",
-      newBalanceAmount,
-      "and type is",
-      balanceType
-    );
+
     if (balanceType === "settle-up") {
       if (customer.totalBalance === 0) {
         return res
@@ -84,7 +73,6 @@ router.post("/update-customer-balance", async (req, res) => {
       }
     }
 
-    await customer.save();
     const transaction = new Transaction({
       transactionType: "balanceUpdate",
       items: [],
@@ -100,7 +88,17 @@ router.post("/update-customer-balance", async (req, res) => {
       user: user._id,
     });
 
+    if (balanceType === "settle-up") {
+      user.userTotal = user.userTotal - oldBalance;
+    } else if (balanceType === "positive") {
+      user.userTotal = user.userTotal - oldBalance - newBalanceAmount;
+    } else {
+      user.userTotal = user.userTotal - oldBalance + newBalanceAmount;
+    }
+
     await transaction.save();
+    await customer.save();
+    await user.save();
 
     return res
       .status(RESPONSE.SUCCESS.OK.status)

@@ -71,14 +71,16 @@ router.post("/add-transaction", async (req, res) => {
     });
 
     customer.totalBalance = balanceAmount;
-    await customer.save();
+
     console.log("customer", customer);
     console.log("transaction", transaction);
     await transaction.save();
-    // const updatedTransactions = await Transaction.find({
-    //   customer: customerID,
-    //   user: user._id,
-    // });
+    await customer.save();
+
+    user.userTotal = user.userTotal + balanceAmount;
+
+    await user.save();
+
     res.status(RESPONSE.SUCCESS.CREATED.status).json({
       message: "Transaction created successfully.",
       transaction,

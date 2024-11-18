@@ -8,6 +8,12 @@ const UserSchema = new mongoose.Schema(
     isVerified: { type: Boolean, default: false }, // Verification status
     verificationCode: String, // Code sent to the user's email
     verificationCodeExpires: Date, // Expiration time for the code
+    userTotal: {
+      type: Number,
+      required: true,
+      default: 0,
+      set: (v) => parseFloat(v.toFixed(2)),
+    },
   },
   { timestamps: true }
 );

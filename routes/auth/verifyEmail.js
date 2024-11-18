@@ -31,10 +31,10 @@ router.post("/verify-email", async (req, res) => {
     const token = jwt.sign({ email: user.email, name: user.name }, JWT_SECRET);
     return res
       .status(RESPONSE.SUCCESS.OK.status)
-      .json({ token, message: "Email verified successfully!" });
+      .json({ user, token, message: "Email verified successfully!" });
   } else {
     return res.status(RESPONSE.ERROR.INVALID_CREDENTIALS.status).json({
-      message: "Invalid or expired verification code.",
+      message: "Invalid code or expired verification code.",
     });
   }
 });

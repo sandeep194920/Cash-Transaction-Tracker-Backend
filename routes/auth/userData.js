@@ -9,6 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 // Endpoint to fetch user data based on the token
 router.get("/user-data", async (req, res) => {
+  console.log("/user-data route");
   const token = req.headers.authorization?.split(" ")[1]; // Get the token from the Authorization header
 
   // Check if the token is provided
@@ -27,14 +28,16 @@ router.get("/user-data", async (req, res) => {
     const user = await User.findOne({ email: userEmail });
 
     const userData = {
+      _id: user._id,
       name: user.name,
       email: user.email,
-      phone: user.phone,
+      userTota: user.userTotal,
     };
 
     if (user) {
+      console.log("The uyser ios", user);
       // If user found, return success response with user data
-      return res.status(RESPONSE.SUCCESS.OK.status).json(userData);
+      return res.status(RESPONSE.SUCCESS.OK.status).json({ user: userData });
     } else {
       // If user not found, return not found error
       return res

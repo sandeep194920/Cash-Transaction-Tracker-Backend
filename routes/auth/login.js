@@ -19,24 +19,6 @@ router.post("/login-user", async (req, res) => {
       .json({ message: "Please register before you login!" });
   }
 
-  // Check if the user is verified
-  if (!oldUser.isVerified) {
-    const { verificationCode, verificationCodeExpires } =
-      await sendVerificationEmail(email); // Await the email sending
-
-    // Update user with new verification details
-    oldUser.verificationCode = verificationCode;
-    oldUser.verificationCodeExpires = verificationCodeExpires;
-
-    await oldUser.save();
-
-    const { status, message } = RESPONSE.ERROR.EMAIL_NOT_VERIFIED;
-    return res.status(status).json({
-      message,
-      resendVerification: true,
-    });
-  }
-
   const isPasswordMatch = await bcrypt.compare(password, oldUser.password);
   if (isPasswordMatch) {
     try {
@@ -44,9 +26,28 @@ router.post("/login-user", async (req, res) => {
         { email: oldUser.email, name: oldUser.name },
         JWT_SECRET
       );
+      // Check if the user is verified
+      if (!oldUser.isVerified) {
+        const { verificationCode, verificationCodeExpires } =
+          await sendVerificationEmail(email); // Await the email sending
+
+        // Update user with new verification details
+        oldUser.verificationCode = verificationCode;
+        oldUser.verificationCodeExpires = verificationCodeExpires;
+
+        await oldUser.save();
+
+        const { status, message } = RESPONSE.ERROR.EMAIL_NOT_VERIFIED;
+        return res.status(status).json({
+          message,
+          resendVerification: true,
+        });
+      }
+
+      // Finally at this point, passwords have also matched and user is also verified. So we can send the token.
       return res
         .status(RESPONSE.SUCCESS.OK.status)
-        .json({ token, message: "Login successful!" });
+        .json({ user: oldUser, token, message: "Login successful!" });
       // eslint-disable-next-line no-unused-vars
     } catch (error) {
       return res
