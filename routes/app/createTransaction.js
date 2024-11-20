@@ -55,8 +55,17 @@ router.post("/add-transaction", async (req, res) => {
     const taxAmount = (grossPrice * taxPercentage) / 100;
     const totalPrice = grossPrice + taxAmount;
 
+    console.log(
+      `Before this transaction, customer balance was - ${customer.totalBalance}, and user total was - ${user.userTotal}`
+    );
+
     // Calculate balance amount
     const balanceAmount = customer.totalBalance + totalPrice - amountPaid;
+
+    console.log(
+      `Current transaction's, total price is ${totalPrice}, amount paid for this order ${amountPaid}`
+    );
+
     // Create a new transaction associated with the customer and user
     const transaction = new Transaction({
       items,
@@ -72,14 +81,15 @@ router.post("/add-transaction", async (req, res) => {
 
     customer.totalBalance = balanceAmount;
 
-    console.log("customer", customer);
-    console.log("transaction", transaction);
     await transaction.save();
     await customer.save();
 
-    user.userTotal = user.userTotal + balanceAmount;
+    user.userTotal = user.userTotal + totalPrice - amountPaid;
 
     await user.save();
+    console.log(
+      `After this transaction, customer's total balance is ${customer.totalBalance}, and user total is, ${user.userTotal}`
+    );
 
     res.status(RESPONSE.SUCCESS.CREATED.status).json({
       message: "Transaction created successfully.",

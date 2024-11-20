@@ -91,9 +91,9 @@ router.post("/update-customer-balance", async (req, res) => {
     if (balanceType === "settle-up") {
       user.userTotal = user.userTotal - oldBalance;
     } else if (balanceType === "positive") {
-      user.userTotal = user.userTotal - oldBalance - newBalanceAmount;
+      user.userTotal = user.userTotal - Math.abs(oldBalance) - newBalanceAmount;
     } else {
-      user.userTotal = user.userTotal - oldBalance + newBalanceAmount;
+      user.userTotal = user.userTotal - Math.abs(oldBalance) + newBalanceAmount;
     }
 
     await transaction.save();

@@ -31,7 +31,7 @@ router.get("/user-data", async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      userTota: user.userTotal,
+      userTotal: user.userTotal,
     };
 
     if (user) {

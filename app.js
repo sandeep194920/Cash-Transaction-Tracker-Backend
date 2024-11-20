@@ -12,6 +12,7 @@ import resendVerificationEmail from "./routes/auth/resendVerificationEmail.js";
 import loginRoute from "./routes/auth/login.js";
 import userDataRoute from "./routes/auth/userData.js";
 import creatCustomer from "./routes/app/createCustomers.js";
+import updateCustomer from "./routes/app/updateCustomer.js";
 import getCustomer from "./routes/app/getCustomer.js";
 import getAllCustomers from "./routes/app/getAllCustomers.js";
 import getCustomerTransactions from "./routes/app/getCustomerTransactions.js";
@@ -48,6 +49,7 @@ app.use("/api", userDataRoute);
 
 // Customer Routes
 app.use("/api", creatCustomer);
+app.use("/api", updateCustomer);
 app.use("/api", getAllCustomers);
 app.use("/api", getCustomer);
 app.use("/api", getCustomerTransactions);
