@@ -29,7 +29,7 @@ router.post("/login-user", async (req, res) => {
       // Check if the user is verified
       if (!oldUser.isVerified) {
         const { verificationCode, verificationCodeExpires } =
-          await sendVerificationEmail(email); // Await the email sending
+          await sendVerificationEmail({ email, name: oldUser.name });
 
         // Update user with new verification details
         oldUser.verificationCode = verificationCode;

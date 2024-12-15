@@ -1,54 +1,47 @@
 import crypto from "crypto";
 import { VERIFY_EMAIL_TIME } from "../constants.js";
-
-// Below sendEmail is for sending emails on brevo (prod)
+import dotenv from "dotenv";
 import { sendEmail } from "../emails/sendEmail_on_prod.js";
+import { transporter } from "../emails/sendEmail_on_test.js";
 
-// Below 2 for sending emails on ethereal
+dotenv.config();
 
-// import { transporter } from "../emails/sendEmail_on_test.js";
-// import { sendEmail } from "../emails/sendEmail.js";
-
-export const sendVerificationEmail = async (email) => {
+export const sendVerificationEmail = async ({ email, name }) => {
   const verificationCode = crypto.randomInt(1000, 9999).toString();
-  const verificationCodeExpires = new Date(Date.now() + VERIFY_EMAIL_TIME); // 5 minutes from now
-
-  // FOR TESTING PURPOSE - Use Ethereal,
-
-  /*To use ethereal  */
-  // const mailOptions = {
-  //   from: '"Support Team" <support@example.com>', // fake support email
-  //   to: email, // recipient email (for testing, any email can be used)
-  //   subject: "Verify your email",
-  //   text: `Your verification code is: ${verificationCode}. It is valid for ${
-  //     VERIFY_EMAIL_TIME / (60 * 1000)
-  //   } minutes.`,
-  //   html: `<b>Your verification code is: ${verificationCode}. It is valid for ${
-  //     VERIFY_EMAIL_TIME / (60 * 1000)
-  //   } minutes.</b>`,
-  // };
-
-  // Uncomment this line for sending mails on ethereal
-  // await transporter.sendMail(mailOptions);
-
-  // --------------------------------------
-  // FOR PROD - Use Brevo
-
-  // prod email sending
+  const verificationCodeExpires = new Date(Date.now() + VERIFY_EMAIL_TIME);
 
   const mailOptions = {
-    subject: "Verify your email",
-    htmlBody: `<h2>Your verification code is: ${verificationCode}</h2>
-      <p>It is valid for ${VERIFY_EMAIL_TIME / (60 * 1000)} minutes</p>
-    `,
-    recipient: {
-      name: "",
-      email,
+    TEST: {
+      from: '"Staar Coding - Support team" <staarcoding@gmail.com>',
+      to: email,
+      subject: "Verify your email",
+      text: `Your verification code is: ${verificationCode}. It is valid for ${
+        VERIFY_EMAIL_TIME / (60 * 1000)
+      } minutes.`,
+      html: `Hi ${name}, please verify your email.
+       <b>Your verification code is: ${verificationCode}. It is valid for ${
+        VERIFY_EMAIL_TIME / (60 * 1000)
+      } minutes.</b>`,
+    },
+    PROD: {
+      subject: "Verify your email",
+      htmlBody: `Hi ${name}, please verify your email. Your verification code is: <h2>${verificationCode}</h2>
+          <p>It is valid for ${
+            VERIFY_EMAIL_TIME / (60 * 1000)
+          } minutes. Type this code in the app's verification screen.</p>
+        `,
+      recipient: {
+        name,
+        email,
+      },
     },
   };
 
-  // prod email sending
-  await sendEmail(mailOptions);
+  if (process.env.ENV === "PROD") {
+    await sendEmail(mailOptions["PROD"]);
+  } else {
+    await transporter.sendMail(mailOptions["TEST"]);
+  }
 
   return {
     verificationCode,

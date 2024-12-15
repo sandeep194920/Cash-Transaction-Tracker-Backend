@@ -32,7 +32,7 @@ router.post("/register-user", async (req, res) => {
 
     // Send verification email and get verification details
     const { verificationCode, verificationCodeExpires } =
-      await sendVerificationEmail(email); // Await sending the email
+      await sendVerificationEmail({ email, name });
 
     // Create the new user
     newUser = await User.create({

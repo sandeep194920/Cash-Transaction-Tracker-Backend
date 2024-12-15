@@ -26,7 +26,7 @@ router.post("/resend-verification", async (req, res) => {
   try {
     // Generate new verification code and expiration
     const { verificationCode, verificationCodeExpires } =
-      await sendVerificationEmail(email); // Await the email sending
+      await sendVerificationEmail({ email, name: user.name });
 
     // Update user with new verification details
     user.verificationCode = verificationCode;
