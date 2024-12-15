@@ -25,7 +25,15 @@ dotenv.config();
 
 const app = express();
 
-const mongoURL = process.env.DB_CONNECTION_STR;
+// const mongoURL = process.env.DB_CONNECTION_STR;
+
+let mongoURL;
+
+if (process.env.ENV === "PROD") {
+  mongoURL = process.env.PROD_DB_CONNECTION_STR;
+} else {
+  mongoURL = process.env.TEST_DB_CONNECTION_STR;
+}
 
 mongoose
   .connect(mongoURL)
