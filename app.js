@@ -18,6 +18,8 @@ import getAllCustomers from "./routes/app/getAllCustomers.js";
 import getCustomerTransactions from "./routes/app/getCustomerTransactions.js";
 import creatTransaction from "./routes/app/createTransaction.js";
 import getTransaction from "./routes/app/getTransaction.js";
+import payment from "./routes/app/payment/payment.js";
+import postPaymentWebhook from "./routes/app/payment/postPaymentWebhook.js";
 import updateCustomerBalance from "./routes/app/updateCustomerBalance.js";
 import testRoute from "./routes/test.js";
 
@@ -67,6 +69,12 @@ app.use("/api", updateCustomerBalance);
 app.use("/api", getTransaction);
 app.use("/api", creatTransaction);
 // app.use("/api", getAllTransactions);
+
+// Payment
+app.use("/api", payment);
+
+// for stripe - post payment webhook
+app.use("/api", postPaymentWebhook);
 
 const PORT = process.env.PORT || 5001;
 
